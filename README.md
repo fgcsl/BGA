@@ -400,7 +400,7 @@ Create new environment and install medusa
     $ medusa -d -f Ref/ -i scaffolds.fasta -random 10 -w2 -v
     ```
 > If you face cPickle error
-Change cPickle to pickle in Home/mambaforge/envs/medusa/share/medusa-1.6-2/script/netcon_mummer.py
+open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/share/medusa-1.6-2/script/netcon_mummer.py
 
 ### Mauve
 1. Create mauve env.
