@@ -372,8 +372,8 @@ https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Lin
 ### MeDuSa
 1. Note If there are any colons in the header of fasta
     ```
-    $ sed -i 's/:/_/g' fasta_file 
-    here, fasta file is "scaffolds.fasta" spades result
+    $ sed -i 's/:/_/g' scaffolds.fasta
+    here, "scaffolds.fasta" spades result
     (If there are any colons in the header of fasta)
     ```
 2. Make a new directory - medusa_out
