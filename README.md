@@ -395,9 +395,11 @@ Create new environment and install medusa
     $ mamba install -c conda-forge mummer
     $ mamba install -c conda-forge biopython
     ```
-5. Run the medusa command
+5. create output_dir and Run the medusa command
     ```
-    $ medusa -d -f Ref/ -i scaffolds.fasta -random 10 -w2 -v
+    $ mkdir medusa_out
+    $ cd medusa_out
+    $ medusa -d -f ../Ref/ -i ../Ref/scaffolds.fasta -random 10 -w2 -v
     ```
 > If you face cPickle error
 open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/share/medusa-1.6-2/script/netcon_mummer.py
