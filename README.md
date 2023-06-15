@@ -178,3 +178,414 @@ Fedora users:
     $ spades.py -h
     $ barrnap --help
     ```
+
+######################## QC ################################
+    
+# Raw Reads QC
+## (Bacterial Genome Analysis Piplene)
+### K-mers & De Bruijn Graphs
+
+##### k-mers are substrings of length k. [Example](https://en.wikipedia.org/wiki/K-mer#Introduction)
+##### [Why k-mers are required]()
+
+### De Bruijn graph a directed graph representing overlaps between sequences of symbols
+[Example]()
+
+### FastQC
+
+A Quality Control Tool. Works on FASTQ, SAM and BAM files
+
+1. Navigate to bgap directory and activate qc
+    ```
+    $ cd Desktop/bgap
+    $ conda deactivate
+    $ conda activate qc
+    ```
+
+2. Open FastQC GUI. Analyze and save the reports
+    ```
+    $ fastqc
+    ```
+3. See the Basic statistics, Per base quality, Sequence length distribution, Overrepresented sequences and Adapter content sections
+
+### BBDuk
+
+1. Run bbduk. Copied adapters file
+    ```
+    $ mkdir bb_out
+    $ cd bb_out
+    $ bbduk.sh in1=../reads/a45_R1.fastq in2=../reads/a45_R2.fastq out1=a45_R1.fastq out2=a45_R2.fastq ref=adapters.fa k=23 mink=7 ktrim=r hdist=1 qtrim=r trimq=20 minlen=100 tpe tbo
+    ```
+
+2. Explanation:
+3. Result
+    >Input:                  	1741880 reads 		436749684 bases.
+    QTrimmed:               	1522186 reads (87.39%) 	103642774 bases (23.73%)
+    KTrimmed:               	376743 reads (21.63%) 	13100754 bases (3.00%)
+    Trimmed by overlap:     	8692 reads (0.50%) 	88862 bases (0.02%)
+    Total Removed:          	170588 reads (9.79%) 	116832390 bases (26.75%)
+    Result:                 	1571292 reads (90.21%) 	319917294 bases (73.25%)
+
+4. Open FastQC GUI. Analyze and save the reports
+    ```
+    $ fastqc
+    ```
+### Trimmomatic
+
+1. Run trimmomatic. Using BBDuk adapters file
+    ```
+    $ mkdir trim_out
+    $ cd trim_out
+    $ trimmomatic PE -phred33 ../reads/a45_R1.fastq ../reads/a45_R2.fastq a45_R1_paired.fq.gz a45_R1_unpaired.fq.gz a45_R2_paired.fq.gz a45_R2_unpaired.fq.gz ILLUMINACLIP:../adapters.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:100
+    ```
+2. Input Read Pairs: 870940 Both Surviving: 599798 (68.87%) Forward Only Surviving: 160897 (18.47%) Reverse Only Surviving: 28249 (3.24%) Dropped: 81996 (9.41%)
+3. Open FastQC GUI. Analyze and save the reports
+    ```
+    $ fastqc
+    ```
+
+######################### mapping assembly ############################
+
+# Mapping and Assembly
+## (Bacterial Genome Analysis Pipeline)
+
+After filtering the raw reads, you can choose either of the following methods depending on the availability of reference genome or intra-species variations.
+Basically, if you have a reference genome and do not expect much variation from it, then the reads are mapped to the reference. Else, de novo assembly is preferred. 
+
+## Mapping to a Reference
+1. Index the reference sequence
+    ```
+    $ mkdir mapping
+    $ cd mapping
+    $ conda deactivate
+    $ conda activate mappers
+    $ cp ../resources/NZ_CP053256.1_A45_Chr.fasta ./Ref_A45_chr.fasta
+    $ bwa index -a is Ref_A45_chr.fasta
+    ```
+2. Align Reads separately
+    ```
+    $ cp ../bb_out/*.fastq ./
+    $ bwa aln -t 12 Ref_A45_chr.fasta a45_R1.fastq > a45_R1.sai
+    $ bwa aln -t 12 Ref_A45_chr.fasta a45_R2.fastq > a45_R2.sai
+    ```
+3. Create SAM file and convert it to BAM
+    ```
+    $  bwa sampe Ref_A45_chr.fasta a45_R1.sai a45_R2.sai a45_R1.fastq a45_R2.fastq > a45_aln.sam
+    $ samtools view -S a45_aln.sam -b -o a45_aln.bam
+    ```
+4.  Sort and index BAM file
+    ```
+    $ samtools sort a45_aln.bam -o a45_sorted.bam
+    $ samtools index a45_sorted.bam
+    ```
+5. Creating a consensus
+    ```
+    $ samtools mpileup -uf Ref_A45_chr.fasta a45_sorted.bam | bcftools call -c | vcfutils.pl vcf2fq > a45_consensus.fq
+    ```
+6. Convert to fasta & change the identifier
+    ```
+    $ conda deactivate
+    $ conda activate emboss
+    $ seqret -osformat fasta a45_consensus.fq -out2 a45_consensus.fa
+    ```
+7. Exporting unmapped reads (Optional)
+    ```
+    $ conda deactivate
+    $ conda activate bam2fastq
+    $ bam2fastq --no-aligned --force --strict -o a45_unmapped#.fq a45_sorted.bam
+    ```
+8. Check the rRNA Genes (Optional)
+    ```
+    $ conda deactivate
+    $ conda activate barrnap
+    $ barrnap -o cons_rrna.fa < ../mappers/a45_consensus.fa > cons_rrna.gff
+    ```            
+
+# de novo Assembly
+
+ ### SPAdes
+ 1. Spades
+    ```
+    $ mkdir spades
+    $ spades.py --careful --pe1-1 bb_out/a45_R1.fastq --pe1-2 bb_out/a45_R2.fastq -o spades/ --cov-cutoff auto -t 12
+    ```
+    > Started at 11:37 pm. Ended at 11:43 pm.
+    With 4 threads: 11:49 pm to 11.59 pm
+    With 6 threads: 9m:54s
+
+
+2. Results
+Check for insert size in the log file & number of contigs/scaffolds in the fasta file.
+    ```
+    $ grep -i 'insert' spades.log
+    $ grep -i '>' scaffolds.fasta -c
+    ```
+
+3. Barrnap (Optional)
+    ```
+    $ mkdir barrnap_out
+    $ cd barrnap_out
+    $ barrnap -o spades_rrna.fa < ../spades/scaffolds.fasta > spades_rrna.gff
+    ```
+
+
+########################### Deno assembly #############################
+
+# Steps after De-novo Assembly
+
+### Contig Management
+
+>Mamba installation START ---
+Yesterday while installing BUSCO, there was an error and could not proceed. It seems the anaconda package manager is compatible to deal with envirnments with lots of packages.
+https://stackoverflow.com/questions/72743734/condas-solving-environment-takes-forever
+The alternative is Mambaforge. Can be downloaded from here...
+https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Linux-x86_64.sh
+
+>Before installing mamba, you have to uninstall the anaconda installation.
+    1. Go to Home directory and delete the complete anaconda3 directory.
+    2. Remove .condarc file (Press Ctrl+H to see hidden files) from Home directory
+    3. In Home directory you will find .bashrc also. Open it with a text editor and delete the lines starting with
+    # >>> conda initialize >>>
+    and ending with
+    # <<< conda initialize <<<
+    These lines are usually at the end of the file.
+    4. After deleting the lines, save it.
+    5. Download the mambaforge file from the above link and install in the same way as Anaconda
+    6. Go to the downloaded folder.
+    7. Right Click and select "Open in Terminal" option
+    $ chmod +x Mambaforge-Linux-x86_64.sh
+    $ ./Mambaforge-Linux-x86_64.sh
+    8. Follow on-screen instructions
+    9. While using mamba, it is similar to conda, only thing is we have to replace conda with mamba
+    Eg. Instead of conda deactivate, you should use mamba deactivate. Similarly, mamba create -n envname
+    10. Note that adding channels is done with conda (not with mamba). So, the following steps to add bioconda channel will be same...
+    conda config --add channels defaults
+    conda config --add channels bioconda
+    conda config --add channels conda-forge
+    conda config --set channel_priority strict
+    11. Apart from these all commands will use mamba
+    12. Since the anaconda3 directory was deleted, all packages should be installed again. 
+    Don't worry. As the name suggests, Mamba is faster than Conda.
+    --- Mamba Installation END ---
+
+
+### MeDuSa
+1. Note If there are any colons in the header of fasta
+    ```
+    $ sed -i 's/:/_/g' fasta_file 
+    here, fasta file is "scaffolds.fasta" spades result
+    (If there are any colons in the header of fasta)
+    ```
+2. Make a new directory - medusa_out
+    ```
+    $ mkdir medusa_out
+    ```
+3. Make a new folder Ref & Merge Chr and Plasmid and save it as full genome.
+    ```
+    $ cat Ref_A45_chr.fasta Ref_A45_p.fasta > Ref_A45_full.fasta
+    ```
+4. Copy the scaffolds file to current directory (scaffolds.fasta from the spades directory)
+Create new environment and install medusa
+    ```
+    $ mamba deactivate
+    $ mamba create -n medusa -y
+    $ mamba activate medusa
+    $ mamba install -c conda-forge -c bioconda medusa
+    $ mamba install -c conda-forge mummer
+    $ mamba install -c conda-forge biopython
+    ```
+5. Run the medusa command
+    ```
+    $ medusa -d -f Ref/ -i scaffolds.fasta -random 10 -w2 -v
+    ```
+> If you face cPickle error
+Change cPickle to pickle in Home/mambaforge/envs/medusa/share/medusa-1.6-2/script/netcon_mummer.py
+
+### Mauve
+1. Create mauve env.
+    ```
+    $ mamba deactivate
+    $ mamba create -n mauve -y
+    $ mamba activate mauve
+    ```
+2. Install Mauve
+    ```
+    $ mamba install -c bioconda mauve
+    $ Mauve
+    ```
+    > This has Graphical UI
+    Do Progressive alignemnt
+    Then Reorder the contigs
+
+### GapCloser
+1. Create filler env.
+    ```
+    $ mamba deactivate 
+    $ mamba create -n fillers -y
+    $ mamba activate fillers
+    ```
+2. Install soapdenovo2-gapcloser
+    ```
+    $ mamba install -c bioconda soapdenovo2-gapcloser
+    $ GapCloser -a ../MeDuSa_out/Uc-I-V-nonSS/Scaffold.fasta -b BSE6-1_GC.config -o BSE6-1_GC0.fasta -t 12
+    ```
+
+### Pilon
+1. Create pilon env. and install
+    ```
+    $ mamba deactivate
+    $ mamba create -n pilon -y
+    $ mamba activate pilon
+    $ mamba install -c bioconda pilon
+    ```
+2. Before running Pilon we have to index the fasta file and reads
+    ```
+    $ mkdir pilon_out
+    $ cd pilon_out
+    $ mamba deactivate
+    $ mamba activate mappers
+    $ mamba install -c bioconda bowtie2
+    $ cp ../filler/a45_GC.fasta ./
+    ```
+### Index the genome
+1. Indexing the genome with bowtie2
+    ```
+    $ bowtie2-build a45_GC.fasta a45
+    Align reads to genome (5 mins with 12 cores)
+    $ bowtie2 -x a45 -1 ../bb_out/a45_R1.fastq -2 ../bb_out/a45_R2.fastq -S reads_on_assembly.sam -p 12
+    ```
+2. Convert SAM to BAM, sort and index
+    ```
+    $ samtools view reads_on_assembly.sam -b -o reads_on_assembly.bam
+    $ samtools sort reads_on_assembly.bam -o reads_on_assembly_sorted.bam
+    $ samtools index reads_on_assembly_sorted.bam
+    ```
+3. Activate pilon
+    ```
+    $ mamba deactivate
+    $ mamba activate pilon
+    $ pilon --genome a45_GC.fasta --frags reads_on_assembly_sorted.bam
+    ```
+If there is a memory error open the following file
+> /home/anwesh/mambaforge/envs/pilon/share/pilon-1.24-0
+And increase the max memory option from
+default_jvm_mem_opts = ['-Xms512m', '-Xmx1g'] to whatever your RAM has (I increase it from 1g to 4g)
+default_jvm_mem_opts = ['-Xms512m', '-Xmx4g']
+
+### BUSCO
+1. Create busco env and install
+    ```
+    $ mamba create -n busco -y
+    $ mamba activate busco
+    $ mamba install -c conda-forge -c bioconda busco=5.4*
+    ```
+2. Run BUSCO
+    ```
+    $ busco -m genome -i ../pilon_out/pilon.fasta -o a45 --auto-lineage-prok -c 10
+    ```
+### CheckM
+1. Create CheckM env and install
+    ```
+    $ mamba deactivate
+    $ mamba create -n checkm python=3.9
+    $ mamba activate checkm
+    $ mamba install numpy matplotlib pysam
+    $ mamba install hmmer prodigal pplacer
+    $ pip install checkm-genome
+    ```
+2. Check the installation
+    ```
+    $ checkm
+    ```
+    ***Note: Copy spades.fasta pilon.fasta and a45_GC.fasta into a new directory - genomes
+Create new directory checkm_out and navigate into it***
+
+3. Run checkm (3 mins)
+    ```
+    $ checkm lineage_wf -x fasta ../genomes/ ./ -r -f ./results.txt -t 12
+    ```
+4. Install assembly-stats
+    ```
+    $ mamba install -c bioconda assembly-stats
+    $ assembly-stats ../genomes/*.fasta > assembly_stats.txt
+    ```
+Split the assembly into Chr and plasmid
+
+RAST
+Online tool
+
+
+#######################genome annotation###############################
+
+# Genome Annotation 
+### Prokka
+1. Create env and install Prokka
+    ```
+    $ conda install -c conda-forge -c bioconda -c defaults prokka
+    $ mamba create -n prokka -y
+    $ mamba activate prokka
+    $ mamba install -c conda-forge -c bioconda prokka
+    ```
+    >Download GBK files as we have a reference genome.
+    https://www.ncbi.nlm.nih.gov/nuccore/NZ_CP053256
+2. make a directory and run prokka
+    ```
+    $ mkdir prokka_out
+    $ prokka --outdir a45 --prefix a45 genomes/pilon.fasta
+    ```
+    > pilon.fasta is a genome sequence
+    Download reference genomoes and run prokka on all of them
+
+### Roary
+1. Create Roary env. and install
+   >Run roary if you have more then one genome, roary takes multiple gff file as input of prokka.
+   if you have only one genome then skip PAN genome (roray) and procced to next step
+    
+    ```
+    $ mamba create -n roary -y
+    $ mamba activate roary
+    $ mamba install -c bioconda roary
+    ```
+
+3. Make a new directory raory and navigate into it
+Run roary ( mins)
+    ```
+    $ roary ../prokka_out/*/*.gff -e -n -r -v -f tenRefs
+    Error: not found File::Find::Rule
+    $ cpan File::Find::Rule
+    ```
+    >FriPan (https://github.com/drpowell/FriPan)
+    Change the server module in server.sh, as suggested in this site
+    https://stackoverflow.com/questions/17351016/set-up-python-simplehttpserver-on-windows
+    Copy roray output to FriPan root and rename it to filename.roary
+
+### Mafft 
+1. Create Mafft env. and install
+    ```
+    $ mamba deactivate
+    $ mamba create -n phylogeny -y
+    $ mamba activate phylogeny
+    $ mamba install -c bioconda mafft
+    Run MAFFT
+    $ mafft --maxiterate 100 --reorder --thread 10 16S_a45-Ref-Out.fasta > 16S_a45-Ref-Out_aln.fasta
+    ```
+    >RaxML GUI - https://github.com/AntonelliLab/raxmlGUI/releases/latest/download/raxmlGUI-2.0.10.AppImage
+    raxmlHPC-PTHREADS-SSE3 -T 10 -f a -x 288426 -p 288426 -N 100 -m GTRGAMMA -O -o H_acinonychis -n 16S -s 16S_BSE-Ref-Out_aln_modified.fasta 
+
+### TYGS
+
+### Dotplot with D-Genies
+
+### antiSMASH
+
+### Circos
+1. Create Circos env. and install
+    ```
+    $ mamba deactivate
+    $ mamba create -n circos -y
+    $ mamba activate circos
+    $ mamba install -c bioconda circos
+    ```
+### KBase
+
+
