@@ -380,9 +380,10 @@ https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Lin
     ```
     $ mkdir medusa_out
     ```
-3. Make a new folder Ref & Merge Chr and Plasmid and save it as full genome.
+3. Make a new folder Ref then Merge Chromosome and Plasmid and save it as full genome.
     ```
     $ cat Ref_A45_chr.fasta Ref_A45_p.fasta > Ref_A45_full.fasta
+    Ref_A45_chr.fasta Ref_A45_plasmid.fasta reference file yoy can download it from NCBI (https://www.ncbi.nlm.nih.gov/genome/169?genome_assembly_id=901025)
     ```
 4. Copy the scaffolds file to current directory (scaffolds.fasta from the spades directory)
 Create new environment and install medusa
