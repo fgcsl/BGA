@@ -478,14 +478,27 @@ open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/sha
     $ mamba install -c bioconda pilon
     ```
 2. Before running Pilon we have to index the fasta file and reads
-    ```
-    $ mkdir pilon_out
-    $ cd pilon_out
-    $ mamba deactivate
-    $ mamba activate mappers
-    $ mamba install -c bioconda bowtie2
-    $ cp ../filler/a45_GC.fasta ./
-    ```
+```
+$ mkdir pilon_out
+$ cd pilon_out
+$ mamba deactivate
+$ mamba activate mappers
+$ mamba install -c bioconda bowtie2
+$ cp ../filler/a45_GC.fasta ./
+```
+3. Index the genome
+```
+$ bowtie2-build a45_GC.fasta a45
+```
+4. Align reads to genome (5 mins with 12 cores)
+```
+$ bowtie2 -x a45 -1 ../bb_out/a45_R1.fastq -2 ../bb_out/a45_R2.fastq -S reads_on_assembly.sam -p 12
+###### Convert SAM to BAM, sort and index
+$ samtools view reads_on_assembly.sam -b -o reads_on_assembly.bam
+$ samtools sort reads_on_assembly.bam -o reads_on_assembly_sorted.bam
+$ samtools index reads_on_assembly_sorted.bam
+```
+
 # Steps for Reference based genome analysis: Index the genome
 1. Indexing the genome with bowtie2
     ```
