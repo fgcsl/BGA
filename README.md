@@ -270,7 +270,7 @@ Basically, if you have a reference genome and do not expect much variation from 
     ```
 3. Create SAM file and convert it to BAM
     ```
-    $  bwa sampe Ref_A45_chr.fasta a45_R1.sai a45_R2.sai a45_R1.fastq a45_R2.fastq > a45_aln.sam
+    $ bwa sampe Ref_A45_chr.fasta a45_R1.sai a45_R2.sai a45_R1.fastq a45_R2.fastq > a45_aln.sam
     $ samtools view -S a45_aln.sam -b -o a45_aln.bam
     ```
 4.  Sort and index BAM file
@@ -394,13 +394,15 @@ https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Lin
 2. Make a new directory - medusa_out
     ```
     $ mkdir medusa_out
+    cp spades/scaffolds.fasta medusa_out
     ```
-3. Inside medusa_out directory create a new folder Ref then download chromosome and plasmid reference data and Merge Chromosome and Plasmid and save it as full genome. If reference have 2 choromosome only then you can merge and save it full genome or if 3-4 plasmid then also do same merege all and make it full genome.
+3. Inside medusa_out directory create a new folder Ref then download chromosome and plasmid reference data and Merge Chromosome and Plasmid and save it as full genome. If reference have 2 choromosome only then you can merge and save it full genome or if 3-4 plasmid then also do same merege all and make it full genome. 
+    **keep only merge file inside Ref directory**
     ```
     $ cd medusa_out
     $ mkdir Ref
     $ cat Ref_A45_chr.fasta Ref_A45_p.fasta > medusa_out/Ref/Ref_A45_full.fasta
-    Ref_A45_chr.fasta Ref_A45_plasmid.fasta reference file yoy can download it from NCBI (https://www.ncbi.nlm.nih.gov/genome/169?genome_assembly_id=901025)
+    Ref_A45_chr.fasta Ref_A45_plasmid.fasta reference file you can download it from NCBI (https://www.ncbi.nlm.nih.gov/genome/169?genome_assembly_id=901025).
     ```
 4. Copy the scaffolds file to current directory (scaffolds.fasta from the spades directory)
 Create new environment and install medusa
@@ -414,8 +416,8 @@ Create new environment and install medusa
     ```
 5. Run the medusa command
     ```
-    $ cd  medusa_out/Ref
-    $ medusa -d -f ../Ref/ -i ../Ref/scaffolds.fasta -random 10 -w2 -v
+    $ cd  medusa_out
+    $ medusa -d -f Ref/ -i scaffolds.fasta -random 10 -w2 -v
     ```
 > If you face cPickle error
 open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/share/medusa-1.6-2/script/netcon_mummer.py
