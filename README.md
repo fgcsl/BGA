@@ -450,7 +450,21 @@ open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/sha
     ```
 2. Install soapdenovo2-gapcloser
     ```
+    >gapcloser required config file as a input with some detais of your sequence like raw reads length
+    max_read_lenth select from bb_out result html file and avg_ins (insert size) should be select from spades.log you gan grep "Insert" from spades.log file
+    >max_rd_len=250
+    [LIB]
+    name=a45
+    avg_ins=452
+    reverse_seq=0
+    asm_flags=4
+    rank=1
+    pair_num_cutoff=3
+    map_len=32
+    q1=bb_out/a45_R1.fastq
+    q2=bb_out/a45_R2.fastq
     $ mamba install -c bioconda soapdenovo2-gapcloser
+    >You have to make config file as save is as "BSE6-1_GC.config"
     $ GapCloser -a medusa_out/Ref/scaffolds.fastaScaffold.fasta -b BSE6-1_GC.config -o BSE6-1_GC0.fasta -t 12
     ```
 
