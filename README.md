@@ -453,6 +453,7 @@ open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/sha
     >gapcloser required config file(download file from this resource code) as a input with some detais of your sequence like raw reads length
     max_read_lenth select from bb_out result html file and avg_ins (insert size) should be select from spades.log you gan grep "Insert" from spades.log file
     >max_rd_len=250
+    a45_GC.config file
    ```
    [LIB]
    name=a45
