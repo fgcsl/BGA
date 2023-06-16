@@ -421,6 +421,10 @@ Create new environment and install medusa
 open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/share/medusa-1.6-2/script/netcon_mummer.py
 
 ### Mauve
+
+>Mauve 
+>Before proceeding with mauve you have to check how many no. of scaffolds are there in  medusa_out/"scaffolds.fastaScaffold.fasta" file , if there is only one or two you can skip Mauve and proceed with gapcloser to close the no of N from genome(scaffolds.fastaScaffold.fasta file).
+
 1. Create mauve env.
     ```
     $ mamba deactivate
