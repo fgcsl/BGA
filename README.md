@@ -498,21 +498,7 @@ $ samtools view reads_on_assembly.sam -b -o reads_on_assembly.bam
 $ samtools sort reads_on_assembly.bam -o reads_on_assembly_sorted.bam
 $ samtools index reads_on_assembly_sorted.bam
 ```
-
-# Steps for Reference based genome analysis: Index the genome
-1. Indexing the genome with bowtie2
-    ```
-    $ bowtie2-build a45_GC.fasta a45
-    Align reads to genome (5 mins with 12 cores)
-    $ bowtie2 -x a45 -1 ../bb_out/a45_R1.fastq -2 ../bb_out/a45_R2.fastq -S reads_on_assembly.sam -p 12
-    ```
-2. Convert SAM to BAM, sort and index
-    ```
-    $ samtools view reads_on_assembly.sam -b -o reads_on_assembly.bam
-    $ samtools sort reads_on_assembly.bam -o reads_on_assembly_sorted.bam
-    $ samtools index reads_on_assembly_sorted.bam
-    ```
-3. Activate pilon
+5. Activate pilon
     ```
     $ mamba deactivate
     $ mamba activate pilon
