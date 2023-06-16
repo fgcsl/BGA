@@ -486,7 +486,7 @@ open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/sha
     $ mamba install -c bioconda bowtie2
     $ cp ../filler/a45_GC.fasta ./
     ```
-### Index the genome
+### Steps for Reference based genome analysis: Index the genome
 1. Indexing the genome with bowtie2
     ```
     $ bowtie2-build a45_GC.fasta a45
