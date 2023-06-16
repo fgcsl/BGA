@@ -482,17 +482,19 @@ open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/sha
     $ mamba install -c bioconda pilon
     ```
 2. Before running Pilon we have to index the fasta file and reads
+>Will do all these analysis inside pilon_out directories
+ 
 ```
 $ mkdir pilon_out
 $ cd pilon_out
 $ mamba deactivate
 $ mamba activate mappers
 $ mamba install -c bioconda bowtie2
-$ cp ../filler/a45_GC.fasta ./
+
 ```
 3. Index the genome
 ```
-$ bowtie2-build a45_GC.fasta a45
+$ bowtie2-build ../filler/a45_GC.fasta a45
 ```
 4. Align reads to genome (5 mins with 12 cores)
 ```
@@ -506,14 +508,15 @@ $ samtools index reads_on_assembly_sorted.bam
     ```
     $ mamba deactivate
     $ mamba activate pilon
-    $ pilon --genome a45_GC.fasta --frags reads_on_assembly_sorted.bam
+    $ pilon --genome ../filler/a45_GC.fasta --frags reads_on_assembly_sorted.bam
     ```
 If there is a memory error open the following file
 > /home/anwesh/mambaforge/envs/pilon/share/pilon-1.24-0
+```
 And increase the max memory option from
 default_jvm_mem_opts = ['-Xms512m', '-Xmx1g'] to whatever your RAM has (I increase it from 1g to 4g)
 default_jvm_mem_opts = ['-Xms512m', '-Xmx4g']
-
+```
 ### BUSCO
 1. Create busco env and install
     ```
