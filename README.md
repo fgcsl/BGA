@@ -328,18 +328,20 @@ Check for insert size in the log file & number of contigs/scaffolds in the fasta
     $ barrnap -o spades_rrna.fa < ../spades/scaffolds.fasta > spades_rrna.gff
     ```
 ======================
-
-Alternatives
-IDBA
+## Alternatives
+### IDBA
+```
 $ fq2fa --merge --filter ../bb_out/a45_R1.fastq ../bb_out/a45_R2.fastq a45_reads.fa
 $ idba_ud -r a45_reads.fa -o ./
-
-Velvet
+```
+### Velvet
+```
 $ VelvetOptimiser.pl -s 79 -e 159 -f '-shortPaired -fastq -separate ../bb_out/a45_R1.fastq ../bb_out/a45_R2.fastq' -t 12 -d ./ -v
-
-Unicycler
+```
+### Unicycler
+```
 $ unicycler -1 ../bb_out/a45_R1.fastq -2 ../bb_out/a45_R2.fastq -o ./ -t 12
-
+```
 ======================
 
 ########################### Deno assembly #############################
