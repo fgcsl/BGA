@@ -327,7 +327,20 @@ Check for insert size in the log file & number of contigs/scaffolds in the fasta
     $ cd barrnap_out
     $ barrnap -o spades_rrna.fa < ../spades/scaffolds.fasta > spades_rrna.gff
     ```
+======================
 
+Alternatives
+IDBA
+$ fq2fa --merge --filter ../bb_out/a45_R1.fastq ../bb_out/a45_R2.fastq a45_reads.fa
+$ idba_ud -r a45_reads.fa -o ./
+
+Velvet
+$ VelvetOptimiser.pl -s 79 -e 159 -f '-shortPaired -fastq -separate ../bb_out/a45_R1.fastq ../bb_out/a45_R2.fastq' -t 12 -d ./ -v
+
+Unicycler
+$ unicycler -1 ../bb_out/a45_R1.fastq -2 ../bb_out/a45_R2.fastq -o ./ -t 12
+
+======================
 
 ########################### Deno assembly #############################
 
@@ -380,9 +393,11 @@ https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Lin
     ```
     $ mkdir medusa_out
     ```
-3. Make a new folder Ref then download chromosome and plasmid reference data and Merge Chromosome and Plasmid and save it as full genome. If reference have 2 choromosome only then you can merge and save it full genome or if 3-4 plasmid then also do same merege all and make it full genome.
+3. Inside medusa_out directory create a new folder Ref then download chromosome and plasmid reference data and Merge Chromosome and Plasmid and save it as full genome. If reference have 2 choromosome only then you can merge and save it full genome or if 3-4 plasmid then also do same merege all and make it full genome.
     ```
-    $ cat Ref_A45_chr.fasta Ref_A45_p.fasta > Ref_A45_full.fasta
+    $ cd medusa_out
+    $ mkdir Ref
+    $ cat Ref_A45_chr.fasta Ref_A45_p.fasta > medusa_out/Ref/Ref_A45_full.fasta
     Ref_A45_chr.fasta Ref_A45_plasmid.fasta reference file yoy can download it from NCBI (https://www.ncbi.nlm.nih.gov/genome/169?genome_assembly_id=901025)
     ```
 4. Copy the scaffolds file to current directory (scaffolds.fasta from the spades directory)
@@ -395,10 +410,9 @@ Create new environment and install medusa
     $ mamba install -c conda-forge mummer
     $ mamba install -c conda-forge biopython
     ```
-5. create output_dir and Run the medusa command
+5. Run the medusa command
     ```
-    $ mkdir medusa_out
-    $ cd medusa_out
+    $ cd  medusa_out/Ref
     $ medusa -d -f ../Ref/ -i ../Ref/scaffolds.fasta -random 10 -w2 -v
     ```
 > If you face cPickle error
