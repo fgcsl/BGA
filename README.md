@@ -439,6 +439,7 @@ open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/sha
     > This has Graphical UI
     Do Progressive alignemnt
     Then Reorder the contigs
+    > tools > move contigs > choose output folder > add sequence(medusa_out/Ref_A45_full.fasta this is combined file plasmid and chromosome) and again add sequence(medusa_out/scaffolds.fastaScaffold.fasta) > start
 
 ### GapCloser
 1. Create filler env.
