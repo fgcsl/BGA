@@ -478,7 +478,7 @@ open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/sha
     $ GapCloser -a medusa_out/scaffolds.fastaScaffold.fasta -b a45_GC.config -o filler/a45_GC.fasta -t 6
     ```
 
-### Pilon
+### Use Pilon if there is still gaps (N) in Gapcloser result
 1. Create pilon env. and install
     ```
     $ mamba deactivate
@@ -522,7 +522,7 @@ And increase the max memory option from
 default_jvm_mem_opts = ['-Xms512m', '-Xmx1g'] to whatever your RAM has (I increase it from 1g to 4g)
 default_jvm_mem_opts = ['-Xms512m', '-Xmx4g']
 ```
-### BUSCO
+### BUSCO (for qc)
 1. Create busco env and install
     ```
     $ mamba create -n busco -y
