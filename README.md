@@ -425,7 +425,7 @@ open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/sha
 ### Mauve
 
 >Mauve 
->Before proceeding with mauve you have to check how many no. of scaffolds are there in  medusa_out/"scaffolds.fastaScaffold.fasta" file , if there is only one or two you can skip Mauve and proceed with gapcloser to close the no of N from genome(scaffolds.fastaScaffold.fasta file).
+>Before proceeding with mauve you have to check how many no. of "N" "n" (gaps) are there and how many no. of scaffolds are there in  medusa_out/"scaffolds.fastaScaffold.fasta" file Mauve is require if you have n then you have to run mauve, after Mauve you can proceed with gapcloser to close the no of N from genome(scaffolds.fastaScaffold.fasta file).
 
 1. Create mauve env.
     ```
