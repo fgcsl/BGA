@@ -473,6 +473,8 @@ open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/sha
     $ mamba install -c bioconda soapdenovo2-gapcloser
     >You have to make config file as save is as "BSE6-1_GC.config"
     $ mkdir filler
+    $ GapCloser -a mauve_out/alignment2/scaffolds.fastaScaffold.fasta -b a45_GC.config -o filler/a45_GC.fasta -t 6
+    OR(If you are skipping mauve then you can use medusa_out as input)
     $ GapCloser -a medusa_out/scaffolds.fastaScaffold.fasta -b a45_GC.config -o filler/a45_GC.fasta -t 6
     ```
 
