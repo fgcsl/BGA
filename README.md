@@ -530,9 +530,12 @@ default_jvm_mem_opts = ['-Xms512m', '-Xmx4g']
     $ mamba create -n busco -y
     $ mamba activate busco
     $ mamba install -c conda-forge -c bioconda busco=5.4*
+    $ mkdir busco_qc
     ```
 2. Run BUSCO
     ```
+    $ busco -m genome -i filler/a45_GC.fasta -o busco_qc/a45 --auto-lineage-prok -c 10
+    OR
     $ busco -m genome -i ../pilon_out/pilon.fasta -o a45 --auto-lineage-prok -c 10
     ```
 ### CheckM
