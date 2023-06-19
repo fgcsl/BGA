@@ -551,14 +551,24 @@ default_jvm_mem_opts = ['-Xms512m', '-Xmx4g']
 2. Check the installation
     ```
     $ checkm
+    $ mkdir checkm
+    $ cd checkm
+    mkdir genomes
+    $ cp ../filler/a45_GC.fasta genomes/
+    $ cp spades/scaffolds.fasta genome
+    $ cp medusa_out/scaffolds.fastaScaffold.fasta genomes/
     ```
-    ***Note: Copy spades.fasta pilon.fasta and a45_GC.fasta into a new directory - genomes
+    ***Note: Copy spades.fasta pilon.fasta or gapcloser.fasta and a45_GC.fasta into a new directory - genomes
 Create new directory checkm_out and navigate into it***
 
 3. Run checkm (3 mins)
     ```
     $ checkm lineage_wf -x fasta ../genomes/ ./ -r -f ./results.txt -t 12
     ```
+    > If you face  FileNotFoundError: [Errno 2] No such file or directory: '/home/dbt-cmi/.checkm/hmms/phylo.hmm' then download reference data (https://github.com/Ecogenomics/CheckM/wiki/Installation#how-to-install-checkm) and extract it in path "/home/dbt-cmi/.checkm/"
+    > Read Installation and download Required reference data (https://data.ace.uq.edu.au/public/CheckM_databases)
+    
+    
 4. Install assembly-stats
     ```
     $ mamba install -c bioconda assembly-stats
