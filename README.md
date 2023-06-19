@@ -306,6 +306,8 @@ Basically, if you have a reference genome and do not expect much variation from 
  ### SPAdes
  1. Spades
     ```
+    $ mkdir denovo
+    $ cd denovo
     $ mkdir spades
     $ spades.py --careful --pe1-1 bb_out/a45_R1.fastq --pe1-2 bb_out/a45_R2.fastq -o spades/ --cov-cutoff auto -t 12
     ```
