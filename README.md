@@ -460,6 +460,7 @@ open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/sha
     >max_rd_len=250
     a45_GC.config file
    ```
+   max_rd_len=250
    [LIB]
    name=a45
    avg_ins=452
