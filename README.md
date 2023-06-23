@@ -2,6 +2,13 @@
 Bacterial Genome Analysis Piplene
 # Bacterial Genome analysis Pipeline -  DBT-CMI 
 
+### Requirements Tools & pacakges
+- mamba
+o can install mamba by running "install_mamba.sh" script
+```
+$bash install_mamba.sh
+```
+
 ### Requirements (QC and Assembly)
 Installing Anaconda
 
