@@ -4,10 +4,10 @@ Bacterial Genome Analysis Piplene
 
 ### Requirements Tools & pacakges
 - mamba
-o can install mamba by running "install_mamba.sh" script
-```
-$bash install_mamba.sh
-```
+    You can install mamba by running "install_mamba.sh" script
+    ```
+    $bash install_mamba.sh
+    ```
 
 ### Requirements (QC and Assembly)
 Installing Anaconda
