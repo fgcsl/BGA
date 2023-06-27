@@ -312,7 +312,14 @@ Basically, if you have a reference genome and do not expect much variation from 
     $ conda deactivate
     $ conda activate barrnap
     $ barrnap -o cons_rrna.fa < ../mappers/a45_consensus.fa > cons_rrna.gff
-    ```            
+    ```
+9. Close the gap (check n gaps in consensus.fasta, if n are there run gapcloser filler)
+
+    ```
+    (bam2fastq)$ mamba deactivate
+    (base)$ mamba activate filler
+    (filler)$ barrnap -o cons_rrna.fa < ../mapping/a45_consensus.fa > cons_rrna.gff
+    ```
 
 # de novo Assembly
 
