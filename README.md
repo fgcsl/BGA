@@ -291,7 +291,7 @@ Basically, if you have a reference genome and do not expect much variation from 
         (bam2fastq)$ mamba deactivate
         (base)$ mamba activate filler
         (filler)$ barrnap -o cons_rrna.fa < ../mapping/a45_consensus.fa > cons_rrna.gff
-    ```
+   ```
 
 # de novo Assembly
 
@@ -337,7 +337,7 @@ Alternatives
     ```
         $ fq2fa --merge --filter ../bb_out/a45_R1.fastq ../bb_out/a45_R2.fastq a45_reads.fa
         $ idba_ud -r a45_reads.fa -o ./
-     ```   
+    ```   
     
 2.  ### Velvet
     ```
@@ -349,10 +349,7 @@ Alternatives
         $ unicycler -1 ../bb_out/a45_R1.fastq -2 ../bb_out/a45_R2.fastq -o ./ -t 12
     ```
     
-
 ======================
-
-
 
 ########################### Deno assembly #############################
 
@@ -366,7 +363,7 @@ Alternatives
 1.  Note If there are any colons in the header of fasta
      ```
         (base)$ sed -i 's/:/_/g' scaffolds.fasta
-      ```  
+     ```  
     
 2.  Make a new directory - medusa\_out and Copy the scaffolds file in medusa\_out directory
     ```
@@ -380,19 +377,19 @@ Alternatives
         (base)$ cd medusa_out
         (base)$ mkdir Ref
         (base)$ cat Ref_A45_chr.fasta Ref_A45_p.fasta > Ref/Ref_A45_full.fasta
-       ``` 
+    ``` 
     
 4.  Copy the scaffolds file to current directory (scaffolds.fasta from the spades directory)  
     Create new environment and install medusa
     ```
         (base)$ mamba deactivate
         $ mamba activate scaffolder
-     ```   
+    ```   
     
 5.  Run the medusa command
-      ```
+   ```
         (scaffolder)$ medusa -d -f Ref/ -i scaffolds.fasta -random 10 -w2 -v
-      ```  
+   ```  
     
 
 > If you face cPickle error  
@@ -404,19 +401,19 @@ Alternatives
 > Before proceeding with mauve you have to check how many no. of “N” “n” (gaps) are there in “medusa\_out/scaffolds.fastaScaffold.fasta” file.
 
 2.  Activate mauve env.
-        ```
+   ```
         (scaffolder)$ cd ../
         (scaffolder)$ mamba deactivate
         (scaffolder)$ mamba activate mauve
-        ```
+   ```
     
 3.  Run Mauve
     
-        ```
+   ```
         (mauve)$ mkdir mauve_out
         (mauve)$ Mauve
         (mauve)$ cd mauve_out
-        ```
+    ```
     
     > This has Graphical UI  
     > Do Progressive alignemnt  
@@ -427,11 +424,11 @@ Alternatives
 ### GapCloser
 
 1.  Activate filler env.
-     ```
+   ```
         (mauve)$ cd ../
         (mauve)$ mamba deactivate 
         (base)$ mamba activate fillers
-      ```  
+    ```  
     
 2.  Run filler (soapdenovo2-gapcloser)
     
@@ -450,7 +447,7 @@ Alternatives
         map_len=32
         q1=bb_out/a45_R1.fastq
         q2=bb_out/a45_R2.fastq
-   ```
+    ```
     ```
         (fillers)$ mkdir filler_out
         (fillers)$ GapCloser -a mauve_out/alignment2/scaffolds.fastaScaffold.fasta -b a45_GC.config -o filler_out/a45_GC.fasta -t 6
@@ -488,7 +485,7 @@ Alternatives
         (mappers)$ mamba deactivate
         (mappers)$ mamba activate pilon
         (pilon)$ pilon --genome ../filler_out/a45_GC.fasta --frags reads_on_assembly_sorted.bam
-     ```   
+    ```   
     
     If there is a memory error open the following file
     
@@ -502,7 +499,7 @@ Alternatives
 ### BUSCO (for qc)
 
 1.  Activate busco env.
-  ```  
+   ```  
         (pilon)$ cd ../
         (pilon)$mamba deactivate
         (base)$ mamba activate busco
@@ -515,7 +512,7 @@ Alternatives
         (busco)$ busco -m genome -i filler_out/a45_GC.fasta -o busco_qc/a45 --auto-lineage-prok -c 10
         OR
         (busco)$ busco -m genome -i pilon_out/pilon.fasta -o a45 --auto-lineage-prok -c 10
-     ```   
+    ```   
     
 
 ### CheckM
@@ -531,17 +528,17 @@ Alternatives
 
 **_Note: Copy spades.fasta pilon.fasta or gapcloser.fasta and a45\_GC.fasta into a new directory - genomes  
 Create new directory checkm\_out and navigate into it_**
-```
-    (checkm)$ mkdir genomes
-    (checkm)$ cp ../filler_out/a45_GC.fasta genomes/
-    (checkm)$ cp ../spades/scaffolds.fasta genomes/
-    (checkm)$ cp ../medusa_out/scaffolds.fastaScaffold.fasta genomes/
- ```   
+    ```
+        (checkm)$ mkdir genomes
+        (checkm)$ cp ../filler_out/a45_GC.fasta genomes/
+        (checkm)$ cp ../spades/scaffolds.fasta genomes/
+        (checkm)$ cp ../medusa_out/scaffolds.fastaScaffold.fasta genomes/
+     ```   
 
 4.  Run checkm
-    ```
+   ```
         (checkm)$ checkm lineage_wf -x fasta ../genomes/ ./ -r -f ./results.txt -t 12
-      ```  
+   ```  
     
     > If you face FileNotFoundError: \[Errno 2\] No such file or directory: ‘/home/dbt-cmi/.checkm/hmms/phylo.hmm’ then download reference data ([https://github.com/Ecogenomics/CheckM/wiki/Installation#how-to-install-checkm](https://github.com/Ecogenomics/CheckM/wiki/Installation#how-to-install-checkm)) and extract it in path “/home/dbt-cmi/.checkm/”  
     > Read Installation and download Required reference data ([https://data.ace.uq.edu.au/public/CheckM\_databases](https://data.ace.uq.edu.au/public/CheckM_databases))
