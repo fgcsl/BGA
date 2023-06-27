@@ -409,7 +409,7 @@ https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Lin
 2. Make a new directory - medusa_out
     ```
     $ mkdir medusa_out
-    cp spades/scaffolds.fasta medusa_out
+    $ cp spades/scaffolds.fasta medusa_out
     ```
 3. Inside medusa_out directory create a new folder Ref then download chromosome and plasmid reference data and Merge Chromosome and Plasmid and save it as full genome. If reference have 2 choromosome only then you can merge and save it full genome or if 3-4 plasmid then also do same merege all and make it full genome. 
     **keep only merge file inside Ref directory**
