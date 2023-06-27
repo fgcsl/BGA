@@ -16,44 +16,7 @@ Bacterial Genome Analysis Piplene
   ```
   - 
 ### Requirements (QC and Assembly)
-Installing Anaconda
 
-Check other lighter and faster versions: [Miniconda](https://docs.conda.io/en/latest/miniconda.html), [Miniforge](https://github.com/conda-forge/miniforge), [Mamba](https://mamba.readthedocs.io/en/latest/installation.html) & [Minimamba](https://mamba.readthedocs.io/en/latest/installation.html)
-
-1. Navigate to Desktop 
-    ```
-    $ cd Desktop
-    ```
-2. Make a directory 'bgap' and a sub-directory 'resources' & navigate to it
-    ```
-    $ mkdir bgap
-    $ mkdir bgap/resources
-    $ cd bgap/resources
-    ```
-3. Download Anaconda script
-    ```
-    $ wget https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh
-    ```
-4. Change permissions and install
-    ```
-    $ chmod +x Anaconda3-2022.10-Linux-x86_64.sh
-    $ Anaconda3-2022.10-Linux-x86_64.sh
-    ```
-5. Follow onscreen instructions. Install in the default directory. On restarting the Terminal, (base) prefix will be shown. Check the installed environments
-    ```
-    $ conda info --envs
-    ```
-6. Add Bioconda channel
-    ```
-    $ conda config --add channels defaults
-    $ conda config --add channels bioconda
-    $ conda config --add channels conda-forge
-    $ conda config --set channel_priority strict
-    ```
-7. Update conda (optional step)
-    ```
-    $ conda update -n base -c defaults conda
-    ```
 ###  Installing sra-tools
 
 1. Create a new environment sra
@@ -107,72 +70,7 @@ Check other lighter and faster versions: [Miniconda](https://docs.conda.io/en/la
     ```
 4. We now have the required raw reads
 
-### Installing QC packages
 
-1. Deactivate sra environment and create qc environment
-    ```
-    $ conda deactivate
-    $ conda create -n qc -y
-    ```          
-
-2. Activate qc and install FastQC, BBDuk and Trimmomatic(Optional) - Always check the versions
-    ```
-    $ conda activate qc
-    $ conda install -c bioconda fastqc trimmomatic bbmap
-    ```
-3. Check installations
-    ```
-    $ fastqc
-    $ trimmomatic -version
-    $ bbduk.sh -h
-    ```
-    
-### Installing Mapping Tools
-
-1. Deactivate qc environment and create mappers environment
-    ```
-    $ conda deactivate
-    $ conda create -n mappers -y
-    ```
-2. Activate mappers and install bwa, bcftools, and samtools
-    ```
-    $ conda activate mappers
-    $ conda install -c bioconda bwa bcftools samtools
-    ```
-3. Check installations
-    ```
-    $ bwa
-    $ bcftools -h
-    $ samtools --help
-    ```           
-
-4. Probable Error samtools: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory
-Fedora users:
-    ```
-    $ sudo dnf install ncurses-libs
-    $ sudo dnf install ncurses-devel
-    $ sudo dnf install ncurses-compat-libs
-     ```             
-    Ubuntu users:
-    ```
-    $ sudo apt-get install libncurses5
-    $ sudo apt-get install ia32-libs
-    ```           
-
-5. Install [bam2fastq](). It requires an older version of samtools. Create new environment
-    ```
-    $ conda deactivate
-    $ conda create -n bam2fastq -y
-    $ conda activate bam2fastq
-    $ conda install -c yuxiang bam2fastq
-    ```
-6. Install [emboss]() in a new environment
-    ```
-    $ conda deactivate
-    $ conda create -n emboss -y
-    $ conda activate emboss
-    $ conda install -c bioconda emboss
-    ```
 ### Download Reference Genome from NCBI for Mapping
 [Helicobacter pylori A45](https://www.ncbi.nlm.nih.gov/genome/169?genome_assembly_id=901025)
 ### Installing Assembling Tools
@@ -259,66 +157,140 @@ A Quality Control Tool. Works on FASTQ, SAM and BAM files
 
 ######################### mapping assembly ############################
 
-# Mapping and Assembly
-## (Bacterial Genome Analysis Pipeline)
+Bacterial genome analysis - Reference based (DAY-1)
+===================================================
 
-After filtering the raw reads, you can choose either of the following methods depending on the availability of reference genome or intra-species variations.
-Basically, if you have a reference genome and do not expect much variation from it, then the reads are mapped to the reference. Else, de novo assembly is preferred. 
+* * *
 
-## Mapping to a Reference
-1. Index the reference sequence
+Raw Reads QC
+------------
+
+FastQC
+------
+
+1.  Navigate to bgap directory and activate qc
+    
+        $ cd Desktop/bgap
+        $ mamba deactivate
+        $ mamba activate qc
+        
+    
+2.  Open FastQC GUI. Analyze and save the reports
+    
+        (qc)$ fastqc
+        
+    
+3.  See the Basic statistics, Per base quality, Sequence length distribution, Overrepresented sequences and Adapter content sections
+
+### BBDuk
+
+1.  Run bbduk. Copied adapters file
+    
+        (qc)$ mkdir bb_out
+        (qc)$ cd bb_out
+        (qc)$ bbduk.sh in1=../reads/a45_R1.fastq in2=../reads/a45_R2.fastq out1=a45_R1.fastq out2=a45_R2.fastq ref=adapters.fa k=23 mink=7 ktrim=r hdist=1 qtrim=r trimq=20 minlen=100 tpe tbo
+        
+    
+2.  Result
+    
+    > Input: 1741880 reads 436749684 bases.  
+    > QTrimmed: 1522186 reads (87.39%) 103642774 bases (23.73%)  
+    > KTrimmed: 376743 reads (21.63%) 13100754 bases (3.00%)  
+    > Trimmed by overlap: 8692 reads (0.50%) 88862 bases (0.02%)  
+    > Total Removed: 170588 reads (9.79%) 116832390 bases (26.75%)  
+    > Result: 1571292 reads (90.21%) 319917294 bases (73.25%)
+    
+3.  Open FastQC GUI. Analyze and save the reports
+    
+        (qc)$ fastqc
+        
+    
+
+### Trimmomatic
+
+1.  Run trimmomatic. Using BBDuk adapters file
+    
+        (qc)$ mkdir trim_out
+        (qc)$ cd trim_out
+        (qc)$ trimmomatic PE -phred33 ../reads/a45_R1.fastq ../reads/a45_R2.fastq a45_R1_paired.fq.gz a45_R1_unpaired.fq.gz a45_R2_paired.fq.gz a45_R2_unpaired.fq.gz ILLUMINACLIP:../adapters.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:100
+        
+    
+2.  Input Read Pairs: 870940 Both Surviving: 599798 (68.87%) Forward Only Surviving: 160897 (18.47%) Reverse Only Surviving: 28249 (3.24%) Dropped: 81996 (9.41%)
+3.  Open FastQC GUI. Analyze and save the reports
+    
+        (qc)$ fastqc
+        
+    
+
+Mapping
+=======
+
+After filtering the raw reads, you can choose either of the following methods depending on the availability of reference genome or intra-species variations.  
+Basically, if you have a reference genome and do not expect much variation from it, then the reads are mapped to the reference. Else, de novo assembly is preferred.
+
+### Mapping to a Reference
+
+1.  Index the reference sequence
     ```
-    $ mkdir mapping
-    $ cd mapping
-    $ conda deactivate
-    $ conda activate mappers
-    $ cp ../resources/NZ_CP053256.1_A45_Chr.fasta ./Ref_A45_chr.fasta
-    $ bwa index -a is Ref_A45_chr.fasta
+        (qc)$ mkdir mapping
+        (qc)$ cd mapping
+        (qc)$ mamba deactivate
+        (qc)$ mamba activate mappers
+        (qc)$ cp ../resources/NZ_CP053256.1_A45_Chr.fasta ./Ref_A45_chr.fasta
+        (qc)$ bwa index -a is Ref_A45_chr.fasta
+    ```  
+    
+2.  Align Reads separately
     ```
-2. Align Reads separately
+        (qc)$ cp ../bb_out/*.fastq ./
+        (qc)$ bwa aln -t 12 Ref_A45_chr.fasta a45_R1.fastq > a45_R1.sai
+        (qc)$ bwa aln -t 12 Ref_A45_chr.fasta a45_R2.fastq > a45_R2.sai
+    ``` 
+    
+3.  Create SAM file and convert it to BAM
     ```
-    $ cp ../bb_out/*.fastq ./
-    $ bwa aln -t 12 Ref_A45_chr.fasta a45_R1.fastq > a45_R1.sai
-    $ bwa aln -t 12 Ref_A45_chr.fasta a45_R2.fastq > a45_R2.sai
+        (qc)$ bwa sampe Ref_A45_chr.fasta a45_R1.sai a45_R2.sai a45_R1.fastq a45_R2.fastq > a45_aln.sam
+        (qc)$ samtools view -S a45_aln.sam -b -o a45_aln.bam
     ```
-3. Create SAM file and convert it to BAM
-    ```
-    $ bwa sampe Ref_A45_chr.fasta a45_R1.sai a45_R2.sai a45_R1.fastq a45_R2.fastq > a45_aln.sam
-    $ samtools view -S a45_aln.sam -b -o a45_aln.bam
-    ```
+    
 4.  Sort and index BAM file
     ```
-    $ samtools sort a45_aln.bam -o a45_sorted.bam
-    $ samtools index a45_sorted.bam
+        (qc)$ samtools sort a45_aln.bam -o a45_sorted.bam
+        (qc)$ samtools index a45_sorted.bam
+     ``` 
+    
+5.  Creating a consensus
     ```
-5. Creating a consensus
+        (qc)$ samtools mpileup -uf Ref_A45_chr.fasta a45_sorted.bam | bcftools call -c | vcfutils.pl vcf2fq > a45_consensus.fq
+    ``` 
+    
+6.  Convert to fasta & change the identifier
     ```
-    $ samtools mpileup -uf Ref_A45_chr.fasta a45_sorted.bam | bcftools call -c | vcfutils.pl vcf2fq > a45_consensus.fq
+        (qc)$ mamba deactivate
+        (base)$ mamba activate emboss
+        (emboss)$ seqret -osformat fasta a45_consensus.fq -out2 a45_consensus.fa
+    ```  
+    
+7.  Exporting unmapped reads (Optional)
+   ``` 
+        (emboss)$ mamba deactivate
+        (base)$ mamba activate bam2fastq
+        (bam2fastq)$ bam2fastq --no-aligned --force --strict -o a45_unmapped#.fq a45_sorted.bam
+   ```
+    
+8.  Check the rRNA Genes (Optional)
     ```
-6. Convert to fasta & change the identifier
+        (bam2fastq)$ mamba deactivate
+        (base)$ mamba activate barrnap
+        (barrnap)$ barrnap -o cons_rrna.fa < ../mappers/a45_consensus.fa > cons_rrna.gff
+   ```     
+    
+9.  Close the gap
     ```
-    $ conda deactivate
-    $ conda activate emboss
-    $ seqret -osformat fasta a45_consensus.fq -out2 a45_consensus.fa
-    ```
-7. Exporting unmapped reads (Optional)
-    ```
-    $ conda deactivate
-    $ conda activate bam2fastq
-    $ bam2fastq --no-aligned --force --strict -o a45_unmapped#.fq a45_sorted.bam
-    ```
-8. Check the rRNA Genes (Optional)
-    ```
-    $ conda deactivate
-    $ conda activate barrnap
-    $ barrnap -o cons_rrna.fa < ../mappers/a45_consensus.fa > cons_rrna.gff
-    ```
-9. Close the gap (check n gaps in consensus.fasta, if n are there run gapcloser filler)
-
-    ```
-    (bam2fastq)$ mamba deactivate
-    (base)$ mamba activate filler
-    (filler)$ barrnap -o cons_rrna.fa < ../mapping/a45_consensus.fa > cons_rrna.gff
+    
+        (bam2fastq)$ mamba deactivate
+        (base)$ mamba activate filler
+        (filler)$ barrnap -o cons_rrna.fa < ../mapping/a45_consensus.fa > cons_rrna.gff
     ```
 
 # de novo Assembly
