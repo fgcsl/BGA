@@ -302,7 +302,7 @@ Alternatives
 1.  Note If there are any colons in the header of fasta
     ```
     (base)$ sed -i 's/:/_/g' scaffolds.fasta
-   ```  
+    ```  
     
 2.  Make a new directory - medusa\_out and Copy the scaffolds file in medusa\_out directory
     ```
@@ -318,19 +318,17 @@ Alternatives
     (base)$ cat Ref_A45_chr.fasta Ref_A45_p.fasta > Ref/Ref_A45_full.fasta
     ``` 
     
-4.  Copy the scaffolds file to current directory (scaffolds.fasta from the spades directory)  
+4. Copy the scaffolds file to current directory (scaffolds.fasta from the spades directory)  
     Create new environment and install medusa
     ```
     (base)$ mamba deactivate
     $ mamba activate scaffolder
     ```   
     
-5.  Run the medusa command
-   ```
+5. Run the medusa command
+    ```
     (scaffolder)$ medusa -d -f Ref/ -i scaffolds.fasta -random 10 -w2 -v
-   ```  
-    
-
+    ```  
 > If you face cPickle error  
 > open python file and Change cPickle to pickle in Home/mambaforge/envs/medusa/share/medusa-1.6-2/script/netcon\_mummer.py
 
@@ -474,7 +472,7 @@ Create new directory checkm\_out and navigate into it_**
     (checkm)$ cp ../medusa_out/scaffolds.fastaScaffold.fasta genomes/
      ```   
 
-4.  Run checkm
+4. Run checkm
    ```
    (checkm)$ checkm lineage_wf -x fasta ../genomes/ ./ -r -f ./results.txt -t 12
    ```  
