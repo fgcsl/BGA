@@ -228,7 +228,7 @@ Basically, if you have a reference genome and do not expect much variation from 
     (bam2fastq)$ mamba deactivate
     (base)$ mamba activate filler
     (filler)$ barrnap -o cons_rrna.fa < ../mapping/a45_consensus.fa > cons_rrna.gff
-   ```
+    ```
 
 # de novo Assembly
 
@@ -240,6 +240,7 @@ de novo Assembly (DAY-2)
 ### SPAdes
 
 1.  Spades
+   
     ```
     (base)$ mkdir denovo
     (base)$ cd denovo
@@ -251,14 +252,15 @@ de novo Assembly (DAY-2)
     > With 4 threads: 11:49 pm to 11.59 pm  
     > With 6 threads: 9m:54s
     
-2.  Results  
+3.  Results
+   
     Check for insert size in the log file & number of contigs/scaffolds in the fasta file.
     ```
     (assembler)$ grep -i 'insert' spades.log
     (assembler)$ grep -i '>' scaffolds.fasta -c
     ```  
     
-3.  Barrnap (Optional)
+5.  Barrnap (Optional)
     ```
     $ mkdir barrnap_out
     $ cd barrnap_out
