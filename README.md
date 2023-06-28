@@ -92,9 +92,6 @@ Bacterial Genome Analysis Piplene
 
 ######################## QC ################################
 
-
-
-
 Bacterial genome analysis - Reference based
 ===================================================
 
@@ -107,26 +104,26 @@ FastQC
 ------
 
 1.  Navigate to bgap directory and activate qc
-  ```              
-        $ cd Desktop/bgap
-        $ mamba deactivate
-        $ mamba activate qc
-   ```     
+    ```              
+    $ cd Desktop/bgap
+    $ mamba deactivate
+    $ mamba activate qc
+    ```     
     
-2.  Open FastQC GUI. Analyze and save the reports
+3.  Open FastQC GUI. Analyze and save the reports
     ```
-        (qc)$ fastqc
+    (qc)$ fastqc
     ```   
     
-3.  See the Basic statistics, Per base quality, Sequence length distribution, Overrepresented sequences and Adapter content sections
+4.  See the Basic statistics, Per base quality, Sequence length distribution, Overrepresented sequences and Adapter content sections
 
 ### BBDuk
 
 1.  Run bbduk. Copied adapters file
     ```
-        (qc)$ mkdir bb_out
-        (qc)$ cd bb_out
-        (qc)$ bbduk.sh in1=../reads/a45_R1.fastq in2=../reads/a45_R2.fastq out1=a45_R1.fastq out2=a45_R2.fastq ref=adapters.fa k=23 mink=7 ktrim=r hdist=1 qtrim=r trimq=20 minlen=100 tpe tbo
+    (qc)$ mkdir bb_out
+    (qc)$ cd bb_out
+    (qc)$ bbduk.sh in1=../reads/a45_R1.fastq in2=../reads/a45_R2.fastq out1=a45_R1.fastq out2=a45_R2.fastq ref=adapters.fa k=23 mink=7 ktrim=r hdist=1 qtrim=r trimq=20 minlen=100 tpe tbo
     ```    
     
 2.  Result
@@ -140,21 +137,21 @@ FastQC
     
 3.  Open FastQC GUI. Analyze and save the reports
    ``` 
-        (qc)$ fastqc
+    (qc)$ fastqc
    ```     
     
 
 ### Trimmomatic
 
 1.  Run trimmomatic. Using BBDuk adapters file
-     ```   
-        (qc)$ mkdir trim_out
-        (qc)$ cd trim_out
-        (qc)$ trimmomatic PE -phred33 ../reads/a45_R1.fastq ../reads/a45_R2.fastq a45_R1_paired.fq.gz a45_R1_unpaired.fq.gz a45_R2_paired.fq.gz a45_R2_unpaired.fq.gz ILLUMINACLIP:../adapters.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:100
-      ```      
+    ```   
+    (qc)$ mkdir trim_out
+    (qc)$ cd trim_out
+    (qc)$ trimmomatic PE -phred33 ../reads/a45_R1.fastq ../reads/a45_R2.fastq a45_R1_paired.fq.gz a45_R1_unpaired.fq.gz a45_R2_paired.fq.gz a45_R2_unpaired.fq.gz ILLUMINACLIP:../adapters.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:100
+    ```      
     
-2.  Input Read Pairs: 870940 Both Surviving: 599798 (68.87%) Forward Only Surviving: 160897 (18.47%) Reverse Only Surviving: 28249 (3.24%) Dropped: 81996 (9.41%)
-3.  Open FastQC GUI. Analyze and save the reports
+3.  Input Read Pairs: 870940 Both Surviving: 599798 (68.87%) Forward Only Surviving: 160897 (18.47%) Reverse Only Surviving: 28249 (3.24%) Dropped: 81996 (9.41%)
+4.  Open FastQC GUI. Analyze and save the reports
      ```   
      (qc)$ fastqc
      ```    
@@ -197,31 +194,31 @@ Basically, if you have a reference genome and do not expect much variation from 
     (qc)$ samtools index a45_sorted.bam
      ``` 
     
-5.  Creating a consensus
+5. Creating a consensus
     ```
     (qc)$ samtools mpileup -uf Ref_A45_chr.fasta a45_sorted.bam | bcftools call -c | vcfutils.pl vcf2fq > a45_consensus.fq
     ``` 
     
-6.  Convert to fasta & change the identifier
-   ```
+6. Convert to fasta & change the identifier
+    ```
     (qc)$ mamba deactivate
     (base)$ mamba activate emboss
     (emboss)$ seqret -osformat fasta a45_consensus.fq -out2 a45_consensus.fa
     ```  
     
-7.  Exporting unmapped reads (Optional)
-   ``` 
+7. Exporting unmapped reads (Optional)
+    ``` 
     (emboss)$ mamba deactivate
     (base)$ mamba activate bam2fastq
     (bam2fastq)$ bam2fastq --no-aligned --force --strict -o a45_unmapped#.fq a45_sorted.bam
-   ```
+    ```
 
 8.  Check the rRNA Genes (Optional)
     ```
     (bam2fastq)$ mamba deactivate
     (base)$ mamba activate barrnap
     (barrnap)$ barrnap -o cons_rrna.fa < ../mappers/a45_consensus.fa > cons_rrna.gff
-   ```     
+    ```     
     
 9.  Close the gap
     ```
@@ -239,8 +236,7 @@ de novo Assembly (DAY-2)
 
 ### SPAdes
 
-1.  Spades
-   
+1.  Spades  
     ```
     (base)$ mkdir denovo
     (base)$ cd denovo
