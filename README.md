@@ -358,7 +358,7 @@ Alternatives
 ### GapCloser
 
 1.  Activate filler env.
-   ```
+    ```
     (mauve)$ cd ../
     (mauve)$ mamba deactivate 
     (base)$ mamba activate fillers
