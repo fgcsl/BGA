@@ -14,7 +14,7 @@ Bacterial Genome Analysis Piplene
   $ bash install_tools.sh
   $ bash install_checkm.sh
   ```
-  - 
+  
 ### Requirements (QC and Assembly)
 
 ###  Installing sra-tools
@@ -56,12 +56,12 @@ Bacterial Genome Analysis Piplene
         ```
         
 2. Convert to FASTQ files and delete the downloaded directory
-    ```
+    ```bash
     $ fasterq-dump SRR22388518/SRR22388518.sra
     $ rm -r SRR22388518
     ```
 3. Move FASTQ files to a new directory and rename.
-    ```
+    ```bash
     $ mkdir ../reads
     $ mv *fastq ../reads/
     $ cd ../reads
