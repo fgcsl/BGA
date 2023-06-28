@@ -286,11 +286,9 @@ Alternatives
     
 ======================
 
-########################### Deno assembly #############################
+########################### Denvo assembly #############################
 
-# Steps after De-novo Assembly
-
-### Contig Management
+Steps after De-novo Assembly: Downstream analyses 
 ### Contig Management
 
 ### MeDuSa
@@ -489,44 +487,48 @@ Online tool
 
 
 #######################genome annotation###############################
-
-# Genome Annotation 
+# Genome Annotation (Day-2)
 ### Prokka
-1. Create env and install Prokka
+1. Activate prokka env.
     ```
-    $ conda install -c conda-forge -c bioconda -c defaults prokka
-    $ mamba create -n prokka -y
-    $ mamba activate prokka
-    $ mamba install -c conda-forge -c bioconda prokka
+   (base)$ mamba activate prokka
     ```
-    >Download GBK files as we have a reference genome.
+    > Download GBK files as we have a reference genome.
     https://www.ncbi.nlm.nih.gov/nuccore/NZ_CP053256
-2. make a directory and run prokka
+    
+2. Make a directory and run prokka
     ```
-    $ mkdir prokka_out
-    $ prokka --outdir a45 --prefix a45 genomes/pilon.fasta
+    (prokka)$ mkdir prokka_out
+    (prokka)$ cd prokka_out
+    (prokka)$ prokka --outdir prokka_out/a45 --prefix a45 genomes/pilon.fasta
+    (prokka)$ mamba deactivate
     ```
     > pilon.fasta is a genome sequence
     Download reference genomoes and run prokka on all of them
 
 ### Roary
-1. Create Roary env. and install
+1. Activate Roary env.
    >Run roary if you have more then one genome, roary takes multiple gff file as input of prokka.
    if you have only one genome then skip PAN genome (roray) and procced to next step
     
     ```
-    $ mamba create -n roary -y
-    $ mamba activate roary
-    $ mamba install -c bioconda roary
+    (base)$  mamba activate roary
+    (roary)$ cd ../
+    (roary)$ mamba activate roary
     ```
 
 3. Make a new directory raory and navigate into it
-Run roary ( mins)
+  Run roary 
     ```
-    $ roary ../prokka_out/*/*.gff -e -n -r -v -f tenRefs
-    Error: not found File::Find::Rule
-    $ cpan File::Find::Rule
+    (roary)$ mkdir roary_out
+    (roary)$ roary prokka_out/*/*.gff -e -n -r -v -f tenRefs
     ```
+    >If Error: not found File::Find::Rule
+    
+    ```
+    (roary)$ cpan File::Find::Rule
+    ```
+    
     >FriPan (https://github.com/drpowell/FriPan)
     Change the server module in server.sh, as suggested in this site
     https://stackoverflow.com/questions/17351016/set-up-python-simplehttpserver-on-windows
@@ -535,30 +537,27 @@ Run roary ( mins)
 ### Mafft 
 1. Create Mafft env. and install
     ```
-    $ mamba deactivate
-    $ mamba create -n phylogeny -y
-    $ mamba activate phylogeny
-    $ mamba install -c bioconda mafft
-    Run MAFFT
-    $ mafft --maxiterate 100 --reorder --thread 10 16S_a45-Ref-Out.fasta > 16S_a45-Ref-Out_aln.fasta
+    (roary)$ mamba deactivate
+    (base)$ mamba create -n phylogeny -y
+    (base)$ mamba activate phylogeny
+    (phylogeny)$ mamba install -c bioconda mafft
+    ```
+2. Run MAFFT
+    ```
+    (phylogeny)$ mafft --maxiterate 100 --reorder --thread 10 16S_a45-Ref-Out.fasta > 16S_a45-Ref-Out_aln.fasta
     ```
     >RaxML GUI - https://github.com/AntonelliLab/raxmlGUI/releases/latest/download/raxmlGUI-2.0.10.AppImage
     raxmlHPC-PTHREADS-SSE3 -T 10 -f a -x 288426 -p 288426 -N 100 -m GTRGAMMA -O -o H_acinonychis -n 16S -s 16S_BSE-Ref-Out_aln_modified.fasta 
 
 ### TYGS
-
 ### Dotplot with D-Genies
-
 ### antiSMASH
-
 ### Circos
 1. Create Circos env. and install
     ```
-    $ mamba deactivate
-    $ mamba create -n circos -y
-    $ mamba activate circos
-    $ mamba install -c bioconda circos
+    (phylogeny)$ mamba deactivate
+    (base)$ mamba create -n circos -y
+    (base)$ mamba activate circos
+    (circos)$ mamba install -c bioconda circos
     ```
 ### KBase
-
-
