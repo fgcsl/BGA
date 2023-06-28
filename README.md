@@ -136,9 +136,9 @@ FastQC
     > Result: 1571292 reads (90.21%) 319917294 bases (73.25%)
     
 3.  Open FastQC GUI. Analyze and save the reports
-   ``` 
+    ``` 
     (qc)$ fastqc
-   ```     
+    ```     
     
 
 ### Trimmomatic
@@ -334,13 +334,14 @@ Alternatives
 > Before proceeding with mauve you have to check how many no. of “N” “n” (gaps) are there in “medusa\_out/scaffolds.fastaScaffold.fasta” file.
 
 2.  Activate mauve env.
-   ```
+   
+    ```
     (scaffolder)$ cd ../
     (scaffolder)$ mamba deactivate
     (scaffolder)$ mamba activate mauve
-   ```
+    ```
     
-3.  Run Mauve
+4.  Run Mauve
     
     ```
     (mauve)$ mkdir mauve_out
