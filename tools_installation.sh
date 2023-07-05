@@ -22,8 +22,18 @@ annotator="mamba create -n annotator -c bioconda prokka -y"
 
 pangenome="mamba create -n pangenome -c bioconda roary -y"
 
-#qiime2="wget https://data.qiime2.org/distro/core/qiime2-2023.5-py38-linux-conda.yml"
-#qiime2="mamba env create -n qiime2 --file qiime2-2023.5-py38-linux-conda.yml"
+busco="mamba create -n busco -c bioconda busco=5.4* -y"
+
+qiime2="mamba env create -n qiime2 --file qiime2-2023.5-py38-linux-conda.yml"
+
+
+#install qiime2 distro 
+
+while [ ! -f qiime2-2023.5-py38-linux-conda.yml ]
+do
+	wget https://data.qiime2.org/distro/core/qiime2-2023.5-py38-linux-conda.yml
+done 
+
 
 mambapath=$(locate mambaforge/envs |head -1)
 
@@ -45,7 +55,7 @@ then
         	for result in $grepResult; do
                 	for env in $mamba_envs; do
                         	if [[ "$env" == "$result" ]]; then
-					echo "Installing $env....."
+					echo "Installing $env ....."
                                 	eval "$"$(eval echo \$env)
 				#	echo $env
         	                fi;
