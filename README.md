@@ -41,6 +41,8 @@ Bacterial Genome Analysis Piplene
 1. While in the resources directory, download Helicobacter pylori raw reads. Check description of the dataset.
     ```
     $ prefetch SRR22388518 -p
+    or
+    $ prefetch -O reads  SRR4148491
     ```
     > **Note:** If downloaded successfully, the following message will appear
         ```
@@ -58,6 +60,8 @@ Bacterial Genome Analysis Piplene
 2. Convert to FASTQ files and delete the downloaded directory
     ```bash
     $ fasterq-dump SRR22388518/SRR22388518.sra
+    or
+    $ fastq-dump -O  ../ --split-3  SRR4148491.sra
     $ rm -r SRR22388518
     ```
 3. Move FASTQ files to a new directory and rename.
