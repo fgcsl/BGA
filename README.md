@@ -175,37 +175,38 @@ Basically, if you have a reference genome and do not expect much variation from 
     (qc)$ cd mapping
     (qc)$ mamba deactivate
     (qc)$ mamba activate mappers
-    (qc)$ cp ../resources/NZ_CP053256.1_A45_Chr.fasta ./Ref_A45_chr.fasta
-    (qc)$ bwa index -a is Ref_A45_chr.fasta
+    # copy reference sequence and save it as Ref_A45_chr.fasta 
+    (mappers)$ cp ../resources/NZ_CP053256.1_A45_Chr.fasta ./Ref_A45_chr.fasta
+    (mappers)$ bwa index -a is Ref_A45_chr.fasta
     ```  
     
 2.  Align Reads separately
     ```
-    (qc)$ cp ../bb_out/*.fastq ./
-    (qc)$ bwa aln -t 12 Ref_A45_chr.fasta a45_R1.fastq > a45_R1.sai
-    (qc)$ bwa aln -t 12 Ref_A45_chr.fasta a45_R2.fastq > a45_R2.sai
+    (mappers)$ cp ../bb_out/*.fastq ./
+    (mappers)$ bwa aln -t 12 Ref_A45_chr.fasta a45_R1.fastq > a45_R1.sai
+    (mappers)$ bwa aln -t 12 Ref_A45_chr.fasta a45_R2.fastq > a45_R2.sai
     ``` 
     
 3.  Create SAM file and convert it to BAM
     ```
-    (qc)$ bwa sampe Ref_A45_chr.fasta a45_R1.sai a45_R2.sai a45_R1.fastq a45_R2.fastq > a45_aln.sam
-    (qc)$ samtools view -S a45_aln.sam -b -o a45_aln.bam
+    (mappers)$ bwa sampe Ref_A45_chr.fasta a45_R1.sai a45_R2.sai a45_R1.fastq a45_R2.fastq > a45_aln.sam
+    (mappers)$ samtools view -S a45_aln.sam -b -o a45_aln.bam
     ```
     
 4.  Sort and index BAM file
     ```
-    (qc)$ samtools sort a45_aln.bam -o a45_sorted.bam
-    (qc)$ samtools index a45_sorted.bam
+    (mappers)$ samtools sort a45_aln.bam -o a45_sorted.bam
+    (mappers)$ samtools index a45_sorted.bam
      ``` 
     
 5. Creating a consensus
     ```
-    (qc)$ samtools mpileup -uf Ref_A45_chr.fasta a45_sorted.bam | bcftools call -c | vcfutils.pl vcf2fq > a45_consensus.fq
+    (mappers)$ samtools mpileup -uf Ref_A45_chr.fasta a45_sorted.bam | bcftools call -c | vcfutils.pl vcf2fq > a45_consensus.fq
     ``` 
     
 6. Convert to fasta & change the identifier
     ```
-    (qc)$ mamba deactivate
+    (mappers)$ mamba deactivate
     (base)$ mamba activate emboss
     (emboss)$ seqret -osformat fasta a45_consensus.fq -out2 a45_consensus.fa
     ```  
