@@ -374,6 +374,7 @@ Steps after De-novo Assembly: Downstream analyses
     
     a45\_GC.config file
     ```
+    max_rd_len=250
     [LIB]
     name=a45
     avg_ins=452
