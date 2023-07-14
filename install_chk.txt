@@ -1,0 +1,16 @@
+qc
+mappers
+bam2fastq
+emboss
+assembler
+shovill
+scaffolder
+mauve
+filler
+annotator
+pangenome
+bgc
+dotplot
+busco
+qiime2
+
