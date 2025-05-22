@@ -554,16 +554,3 @@ Online tool
     ```
     >RaxML GUI - https://github.com/AntonelliLab/raxmlGUI/releases/latest/download/raxmlGUI-2.0.10.AppImage
     raxmlHPC-PTHREADS-SSE3 -T 10 -f a -x 288426 -p 288426 -N 100 -m GTRGAMMA -O -o H_acinonychis -n 16S -s 16S_BSE-Ref-Out_aln_modified.fasta 
-
-### TYGS
-### Dotplot with D-Genies
-### antiSMASH
-### Circos
-1. Create Circos env. and install
-    ```
-    (phylogeny)$ mamba deactivate
-    (base)$ mamba create -n circos -y
-    (base)$ mamba activate circos
-    (circos)$ mamba install -c bioconda circos
-    ```
-### KBase
